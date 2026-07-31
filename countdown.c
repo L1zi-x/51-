@@ -1,17 +1,8 @@
-/* ============================================================
- * 倒计时代码段（从 CSGO 下包模拟器 main.c 拆分）
- *
- * 功能：40 秒倒计时，2kHz 音调越来越快；
- *       结束显示 0 并持续报警；S14 复位。
- * 依赖：输入密码段提供 ClearInput()。
- * ============================================================ */
-
 #include <REGX52.H>
 
 typedef unsigned char u8;
 typedef unsigned int u16;
 
-/* 硬件引脚 */
 sbit LSA = P2^2;
 sbit LSB = P2^3;
 sbit LSC = P2^4;
@@ -26,15 +17,12 @@ sbit BEEP = P2^5;
 
 #define TOTAL_SECONDS 40
 
-/* 共享状态（合并工程时只保留一份） */
 volatile u8 gState = ST_INPUT;
 volatile u8 gSeconds;
 volatile u16 gMsTick;
 volatile u16 gBeepHalfMs;
 volatile u16 gBeepTimer;
 volatile u8  gToneActive = 0;
-
-/* 输入密码段提供的函数 */
 extern void ClearInput(void);
 
 void DelayMs(u16 ms)
@@ -44,13 +32,12 @@ void DelayMs(u16 ms)
         for (i = 0; i < 110; i++);
 }
 
-/* 定时器 0：1ms 时基 */
 #define TIMER0_RELOAD_H 0xFC
 #define TIMER0_RELOAD_L 0x67
 void Timer0Init(void)
 {
     TMOD &= 0xF0;
-    TMOD |= 0x01;   /* Timer0 方式 1 */
+    TMOD |= 0x01;   /* Timer0 鏂瑰紡 1 */
     TH0 = TIMER0_RELOAD_H;
     TL0 = TIMER0_RELOAD_L;
     ET0 = 1;
@@ -58,13 +45,12 @@ void Timer0Init(void)
     TR0 = 1;
 }
 
-/* 定时器 1：0.25ms 翻转一次，输出约 2kHz 音调 */
 #define TONE_RELOAD_H 0xFF
 #define TONE_RELOAD_L 0x1A
 void Timer1Init(void)
 {
     TMOD &= 0x0F;
-    TMOD |= 0x10;   /* Timer1 方式 1 */
+    TMOD |= 0x10;   /* Timer1 鏂瑰紡 1 */
     TH1 = TONE_RELOAD_H;
     TL1 = TONE_RELOAD_L;
     ET1 = 1;
@@ -88,7 +74,6 @@ void Timer0_ISR(void) interrupt 1
 
     if (gState == ST_COUNTING)
     {
-        /* 响/停交替；响的时段由 Timer1 输出 2kHz */
         if (++gBeepTimer >= gBeepHalfMs)
         {
             gBeepTimer = 0;
@@ -116,7 +101,6 @@ void Timer0_ISR(void) interrupt 1
     }
 }
 
-/* 数码管 */
 u8 code SEG_TAB[] =
 {
     0x3F, 0x06, 0x5B, 0x4F, 0x66,
@@ -130,7 +114,7 @@ u8 code POS_CODE[8] = {7, 6, 5, 4, 3, 2, 1, 0};
 void DisplayOne(u8 pos, u8 segIndex)
 {
     u8 sel;
-    P0 = 0xFF;              /* 消隐 */
+    P0 = 0xFF;              /* 娑堥殣 */
     sel = POS_CODE[pos];
     LSA = sel & 0x01;
     LSB = (sel >> 1) & 0x01;
@@ -140,7 +124,6 @@ void DisplayOne(u8 pos, u8 segIndex)
     P0 = 0x00;
 }
 
-/* 倒计时：最右两位显示剩余秒数 */
 void DisplayCountdown(void)
 {
     if (gSeconds >= 10)
@@ -150,14 +133,12 @@ void DisplayCountdown(void)
     DisplayOne(7, gSeconds % 10);
 }
 
-/* 报警：显示 0 */
 void DisplayAlarm(void)
 {
     DisplayOne(6, SEG_BLANK);
     DisplayOne(7, 0);
 }
 
-/* 进入倒计时（密码确认后调用） */
 void StartCountdown(void)
 {
     gState = ST_COUNTING;
@@ -169,7 +150,6 @@ void StartCountdown(void)
     BEEP = BEEP_OFF_LEVEL;
 }
 
-/* S14：复位 */
 void ResetSystem(void)
 {
     ClearInput();
