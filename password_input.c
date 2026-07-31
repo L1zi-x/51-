@@ -1,17 +1,7 @@
-/* ============================================================
- * 输入密码代码段（从 CSGO 下包模拟器 main.c 拆分）
- *
- * 功能：S1~S10 输入 7 位密码，S14 清空，S16 确认；
- *       密码正确后调用倒计时段的 StartCountdown()。
- * 依赖：倒计时段提供 StartCountdown()，完整工程请同时包含 countdown.c。
- * ============================================================ */
-
 #include <REGX52.H>
 
 typedef unsigned char u8;
 typedef unsigned int u16;
-
-/* 硬件引脚 */
 sbit LSA = P2^2;
 sbit LSB = P2^3;
 sbit LSC = P2^4;
@@ -26,7 +16,6 @@ sbit BEEP = P2^5;
 
 u8 code PASSWORD[PASSWORD_LEN] = {7, 3, 5, 5, 6, 0, 8};
 
-/* 数码管段码：0~9，最后为全灭 */
 u8 code SEG_TAB[] =
 {
     0x3F, 0x06, 0x5B, 0x4F, 0x66,
@@ -35,15 +24,11 @@ u8 code SEG_TAB[] =
 };
 #define SEG_BLANK 10
 
-/* 位选编码；左右反了改成 {0,1,2,3,4,5,6,7} */
 u8 code POS_CODE[8] = {7, 6, 5, 4, 3, 2, 1, 0};
 
-/* 输入态变量 */
 u8 gDigits[PASSWORD_LEN];
 u8 gDigitCount = 0;
 volatile u8 gToneActive = 0;
-
-/* 倒计时段提供的函数 */
 extern void StartCountdown(void);
 
 void DelayMs(u16 ms)
@@ -56,7 +41,7 @@ void DelayMs(u16 ms)
 void DisplayOne(u8 pos, u8 segIndex)
 {
     u8 sel;
-    P0 = 0xFF;              /* 消隐 */
+    P0 = 0xFF;              
     sel = POS_CODE[pos];
     LSA = sel & 0x01;
     LSB = (sel >> 1) & 0x01;
@@ -66,7 +51,6 @@ void DisplayOne(u8 pos, u8 segIndex)
     P0 = 0x00;
 }
 
-/* 输入态：数字靠右显示 */
 void DisplayInput(void)
 {
     u8 i;
@@ -80,15 +64,14 @@ void DisplayInput(void)
     }
 }
 
-/* 矩阵键盘：返回 S1~S16，无按键返回 0 */
 u8 KeyScan(void)
 {
     u8 key = 0;
 
-    KEY_PORT = 0x0F;    /* 列扫描 */
+    KEY_PORT = 0x0F;   
     if (KEY_PORT != 0x0F)
     {
-        DelayMs(10);    /* 消抖 */
+        DelayMs(10);   
         if (KEY_PORT != 0x0F)
         {
             switch (KEY_PORT)
@@ -100,7 +83,7 @@ u8 KeyScan(void)
                 default:   key = 0;  break;
             }
 
-            KEY_PORT = 0xF0;    /* 行扫描 */
+            KEY_PORT = 0xF0;  
             switch (KEY_PORT & 0xF0)
             {
                 case 0x70: key += 0;  break;
@@ -110,13 +93,12 @@ u8 KeyScan(void)
                 default:   key = 0;   break;
             }
 
-            while (KEY_PORT != 0xF0);   /* 等待松开 */
+            while (KEY_PORT != 0xF0);   
         }
     }
     return key;
 }
 
-/* 清空已输入密码 */
 void ClearInput(void)
 {
     u8 i;
@@ -125,7 +107,6 @@ void ClearInput(void)
     gDigitCount = 0;
 }
 
-/* 错误提示：两声短音 */
 void ErrorBeep(void)
 {
     u8 i;
@@ -140,7 +121,6 @@ void ErrorBeep(void)
     }
 }
 
-/* S16：确认密码；正确则进入倒计时 */
 void ConfirmPassword(void)
 {
     u8 i;
