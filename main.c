@@ -1,8 +1,7 @@
 /*******************************************************************************
- * CSGO ÏÂ°üÄ£ÄâÆ÷£¨51 µ¥Æ¬»ú£¬Keil C51£©
- * ÃÜÂë 7355608£¬S16 È·ÈÏºó½øÈë 40 Ãëµ¹¼ÆÊ±£»
- * µ¹¼ÆÊ±ÖĞ 2kHz Òôµ÷Ô½À´Ô½¿ì£¬½áÊø³ÖĞø±¨¾¯£¬S14 ¸´Î»¡£
- * ¾§Õñ 11.0592MHz£»12MHz Ê± Timer0 ÖØ×°Öµ¸Ä 0xFC18¡£
+ * CSGO ä¸‹åŒ…æ¨¡æ‹Ÿå™¨
+ * å¯†ç  7355608ï¼ŒS16 ç¡®è®¤åè¿›å…¥ 40 ç§’å€’è®¡æ—¶ï¼›
+ * å€’è®¡æ—¶ä¸­ 2kHz éŸ³è°ƒè¶Šæ¥è¶Šå¿«ï¼Œç»“æŸæŒç»­æŠ¥è­¦ï¼ŒS14 å¤ä½ã€‚
  ******************************************************************************/
 
 #include <REGX52.H>
@@ -10,7 +9,7 @@
 typedef unsigned char u8;
 typedef unsigned int u16;
 
-/* Ó²¼şÒı½Å */
+/* ç¡¬ä»¶å¼•è„š */
 sbit LSA = P2^2;
 sbit LSB = P2^3;
 sbit LSC = P2^4;
@@ -18,11 +17,11 @@ sbit BEEP = P2^5;
 
 #define KEY_PORT P1
 
-/* ·äÃùÆ÷µÍµçÆ½´¥·¢£»¸ßµçÆ½´¥·¢Ê±½»»» 0/1 */
+/* èœ‚é¸£å™¨ä½ç”µå¹³è§¦å‘ï¼›é«˜ç”µå¹³è§¦å‘æ—¶äº¤æ¢ 0/1 */
 #define BEEP_ON_LEVEL  0
 #define BEEP_OFF_LEVEL 1
 
-/* ÊıÂë¹Ü¶ÎÂë£º0~9£¬×îºóÎªÈ«Ãğ */
+/* æ•°ç ç®¡æ®µç ï¼š0~9ï¼Œæœ€åä¸ºå…¨ç­ */
 u8 code SEG_TAB[] =
 {
     0x3F, 0x06, 0x5B, 0x4F, 0x66,
@@ -31,19 +30,19 @@ u8 code SEG_TAB[] =
 };
 #define SEG_BLANK 10
 
-/* Î»Ñ¡±àÂë£»×óÓÒ·´ÁË¸Ä³É {0,1,2,3,4,5,6,7} */
+/* ä½é€‰ç¼–ç ï¼›å·¦å³åäº†æ”¹æˆ {0,1,2,3,4,5,6,7} */
 u8 code POS_CODE[8] = {7, 6, 5, 4, 3, 2, 1, 0};
 
-/* ×´Ì¬ */
-#define ST_INPUT    0   /* ÊäÈëÃÜÂë */
-#define ST_COUNTING 1   /* 40 Ãëµ¹¼ÆÊ± */
-#define ST_ALARM    2   /* µ¹¼ÆÊ±½áÊø */
+/* çŠ¶æ€ */
+#define ST_INPUT    0   /* è¾“å…¥å¯†ç  */
+#define ST_COUNTING 1   /* 40 ç§’å€’è®¡æ—¶ */
+#define ST_ALARM    2   /* å€’è®¡æ—¶ç»“æŸ */
 
 #define PASSWORD_LEN 7
 #define TOTAL_SECONDS 40
 u8 code PASSWORD[PASSWORD_LEN] = {7, 3, 5, 5, 6, 0, 8};
 
-/* È«¾Ö±äÁ¿£¨ISR ¹²ÏíµÄ¼Ó volatile£© */
+/* å…¨å±€å˜é‡ï¼ˆISR å…±äº«çš„åŠ  volatileï¼‰ */
 volatile u8 gState = ST_INPUT;
 u8 gDigits[PASSWORD_LEN];
 u8 gDigitCount = 0;
@@ -53,7 +52,7 @@ volatile u16 gBeepHalfMs;
 volatile u16 gBeepTimer;
 volatile u8  gToneActive = 0;
 
-/* Ô¼ 1ms Èí¼şÑÓÊ± */
+/* è½¯ä»¶å»¶æ—¶ */
 void DelayMs(u16 ms)
 {
     u16 i;
@@ -61,13 +60,13 @@ void DelayMs(u16 ms)
         for (i = 0; i < 110; i++);
 }
 
-/* ¶¨Ê±Æ÷ 0£º1ms Ê±»ù */
+/* å®šæ—¶å™¨ 0ï¼š1ms æ—¶åŸº */
 #define TIMER0_RELOAD_H 0xFC
 #define TIMER0_RELOAD_L 0x67
 void Timer0Init(void)
 {
     TMOD &= 0xF0;
-    TMOD |= 0x01;   /* Timer0 ·½Ê½ 1 */
+    TMOD |= 0x01;   /* Timer0 æ–¹å¼ 1 */
     TH0 = TIMER0_RELOAD_H;
     TL0 = TIMER0_RELOAD_L;
     ET0 = 1;
@@ -75,13 +74,13 @@ void Timer0Init(void)
     TR0 = 1;
 }
 
-/* ¶¨Ê±Æ÷ 1£º0.25ms ·­×ªÒ»´Î£¬Êä³öÔ¼ 2kHz Òôµ÷ */
+/* å®šæ—¶å™¨ 1ï¼š0.25ms ç¿»è½¬ä¸€æ¬¡ï¼Œè¾“å‡ºçº¦ 2kHz éŸ³è°ƒ */
 #define TONE_RELOAD_H 0xFF
 #define TONE_RELOAD_L 0x1A
 void Timer1Init(void)
 {
     TMOD &= 0x0F;
-    TMOD |= 0x10;   /* Timer1 ·½Ê½ 1 */
+    TMOD |= 0x10;   /* Timer1 æ–¹å¼ 1 */
     TH1 = TONE_RELOAD_H;
     TL1 = TONE_RELOAD_L;
     ET1 = 1;
@@ -105,7 +104,7 @@ void Timer0_ISR(void) interrupt 1
 
     if (gState == ST_COUNTING)
     {
-        /* Ïì/Í£½»Ìæ£»ÏìµÄÊ±¶ÎÓÉ Timer1 Êä³ö 2kHz */
+        /* å“/åœäº¤æ›¿ï¼›å“çš„æ—¶æ®µç”± Timer1 è¾“å‡º 2kHz */
         if (++gBeepTimer >= gBeepHalfMs)
         {
             gBeepTimer = 0;
@@ -133,11 +132,11 @@ void Timer0_ISR(void) interrupt 1
     }
 }
 
-/* ÊıÂë¹ÜÏÔÊ¾ */
+/* æ•°ç ç®¡æ˜¾ç¤º */
 void DisplayOne(u8 pos, u8 segIndex)
 {
     u8 sel;
-    P0 = 0xFF;              /* ÏûÒş */
+    P0 = 0xFF;              /* æ¶ˆéš */
     sel = POS_CODE[pos];
     LSA = sel & 0x01;
     LSB = (sel >> 1) & 0x01;
@@ -147,7 +146,7 @@ void DisplayOne(u8 pos, u8 segIndex)
     P0 = 0x00;
 }
 
-/* ÊäÈëÌ¬£ºÊı×Ö¿¿ÓÒÏÔÊ¾ */
+/* è¾“å…¥æ€ï¼šæ•°å­—é å³æ˜¾ç¤º */
 void DisplayInput(void)
 {
     u8 i;
@@ -161,7 +160,7 @@ void DisplayInput(void)
     }
 }
 
-/* µ¹¼ÆÊ±£º×îÓÒÁ½Î»ÏÔÊ¾Ê£ÓàÃëÊı */
+/* å€’è®¡æ—¶ï¼šæœ€å³ä¸¤ä½æ˜¾ç¤ºå‰©ä½™ç§’æ•° */
 void DisplayCountdown(void)
 {
     if (gSeconds >= 10)
@@ -171,22 +170,22 @@ void DisplayCountdown(void)
     DisplayOne(7, gSeconds % 10);
 }
 
-/* ±¨¾¯£ºÏÔÊ¾ 0 */
+/* æŠ¥è­¦ï¼šæ˜¾ç¤º 0 */
 void DisplayAlarm(void)
 {
     DisplayOne(6, SEG_BLANK);
     DisplayOne(7, 0);
 }
 
-/* ¾ØÕó¼üÅÌ£º·µ»Ø S1~S16£¬ÎŞ°´¼ü·µ»Ø 0 */
+/* çŸ©é˜µé”®ç›˜ï¼šè¿”å› S1~S16ï¼Œæ— æŒ‰é”®è¿”å› 0 */
 u8 KeyScan(void)
 {
     u8 key = 0;
 
-    KEY_PORT = 0x0F;    /* ÁĞÉ¨Ãè */
+    KEY_PORT = 0x0F;    /* åˆ—æ‰«æ */
     if (KEY_PORT != 0x0F)
     {
-        DelayMs(10);    /* Ïû¶¶ */
+        DelayMs(10);    /* æ¶ˆæŠ– */
         if (KEY_PORT != 0x0F)
         {
             switch (KEY_PORT)
@@ -198,7 +197,7 @@ u8 KeyScan(void)
                 default:   key = 0;  break;
             }
 
-            KEY_PORT = 0xF0;    /* ĞĞÉ¨Ãè */
+            KEY_PORT = 0xF0;    /* è¡Œæ‰«æ */
             switch (KEY_PORT & 0xF0)
             {
                 case 0x70: key += 0;  break;
@@ -208,13 +207,13 @@ u8 KeyScan(void)
                 default:   key = 0;   break;
             }
 
-            while (KEY_PORT != 0xF0);   /* µÈ´ıËÉ¿ª */
+            while (KEY_PORT != 0xF0);   /* ç­‰å¾…æ¾å¼€ */
         }
     }
     return key;
 }
 
-/* Çå¿ÕÒÑÊäÈëÃÜÂë */
+/* æ¸…ç©ºå·²è¾“å…¥å¯†ç  */
 void ClearInput(void)
 {
     u8 i;
@@ -223,7 +222,7 @@ void ClearInput(void)
     gDigitCount = 0;
 }
 
-/* ´íÎóÌáÊ¾£ºÁ½Éù¶ÌÒô */
+/* é”™è¯¯æç¤ºï¼šä¸¤å£°çŸ­éŸ³ */
 void ErrorBeep(void)
 {
     u8 i;
@@ -238,7 +237,7 @@ void ErrorBeep(void)
     }
 }
 
-/* S16£ºÈ·ÈÏÃÜÂë */
+/* S16ï¼šç¡®è®¤å¯†ç  */
 void ConfirmPassword(void)
 {
     u8 i;
@@ -275,7 +274,7 @@ void ConfirmPassword(void)
     }
 }
 
-/* S14£º¸´Î» */
+/* S14ï¼šå¤ä½ */
 void ResetSystem(void)
 {
     ClearInput();
