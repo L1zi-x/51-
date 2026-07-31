@@ -1,9 +1,7 @@
 /******************************************************************************
  * CSGO 下包模拟器
- * 密码 7355608，S16 确认后进入 40 秒倒计时；
- * 倒计时中 2kHz 音调越来越快，结束持续报警，S14 复位。
+ * 密码 7355608，按S16 确认后进入 40 秒倒计时；
  ******************************************************************************/
-
 #include <REGX52.H>
 
 typedef unsigned char u8;
@@ -16,12 +14,9 @@ sbit LSC = P2^4;
 sbit BEEP = P2^5;
 
 #define KEY_PORT P1
-
-/* 蜂鸣器低电平触发；高电平触发时交换 0/1 */
 #define BEEP_ON_LEVEL  0
 #define BEEP_OFF_LEVEL 1
 
-/* 数码管段码：0~9，最后为全灭 */
 u8 code SEG_TAB[] =
 {
     0x3F, 0x06, 0x5B, 0x4F, 0x66,
@@ -30,7 +25,6 @@ u8 code SEG_TAB[] =
 };
 #define SEG_BLANK 10
 
-/* 位选编码；左右反了改成 {0,1,2,3,4,5,6,7} */
 u8 code POS_CODE[8] = {7, 6, 5, 4, 3, 2, 1, 0};
 
 /* 状态 */
@@ -42,7 +36,6 @@ u8 code POS_CODE[8] = {7, 6, 5, 4, 3, 2, 1, 0};
 #define TOTAL_SECONDS 40
 u8 code PASSWORD[PASSWORD_LEN] = {7, 3, 5, 5, 6, 0, 8};
 
-/* 全局变量（ISR 共享的加 volatile） */
 volatile u8 gState = ST_INPUT;
 u8 gDigits[PASSWORD_LEN];
 u8 gDigitCount = 0;
@@ -52,7 +45,7 @@ volatile u16 gBeepHalfMs;
 volatile u16 gBeepTimer;
 volatile u8  gToneActive = 0;
 
-/* 软件延时 */
+/* 延时 */
 void DelayMs(u16 ms)
 {
     u16 i;
@@ -74,7 +67,7 @@ void Timer0Init(void)
     TR0 = 1;
 }
 
-/* 定时器 1：0.25ms 翻转一次，输出约 2kHz 音调 */
+/* 定时器 */
 #define TONE_RELOAD_H 0xFF
 #define TONE_RELOAD_L 0x1A
 void Timer1Init(void)
@@ -104,7 +97,6 @@ void Timer0_ISR(void) interrupt 1
 
     if (gState == ST_COUNTING)
     {
-        /* 响/停交替；响的时段由 Timer1 输出 2kHz */
         if (++gBeepTimer >= gBeepHalfMs)
         {
             gBeepTimer = 0;
@@ -132,7 +124,7 @@ void Timer0_ISR(void) interrupt 1
     }
 }
 
-/* 数码管显示 */
+/* 显示 */
 void DisplayOne(u8 pos, u8 segIndex)
 {
     u8 sel;
@@ -146,7 +138,6 @@ void DisplayOne(u8 pos, u8 segIndex)
     P0 = 0x00;
 }
 
-/* 输入态：数字靠右显示 */
 void DisplayInput(void)
 {
     u8 i;
@@ -160,7 +151,7 @@ void DisplayInput(void)
     }
 }
 
-/* 倒计时：最右两位显示剩余秒数 */
+/* 倒计时 */
 void DisplayCountdown(void)
 {
     if (gSeconds >= 10)
@@ -170,14 +161,14 @@ void DisplayCountdown(void)
     DisplayOne(7, gSeconds % 10);
 }
 
-/* 报警：显示 0 */
+/* 报警 */
 void DisplayAlarm(void)
 {
     DisplayOne(6, SEG_BLANK);
     DisplayOne(7, 0);
 }
 
-/* 矩阵键盘：返回 S1~S16，无按键返回 0 */
+/* 矩阵键盘 */
 u8 KeyScan(void)
 {
     u8 key = 0;
@@ -213,7 +204,7 @@ u8 KeyScan(void)
     return key;
 }
 
-/* 清空已输入密码 */
+/* 清空 */
 void ClearInput(void)
 {
     u8 i;
@@ -222,7 +213,7 @@ void ClearInput(void)
     gDigitCount = 0;
 }
 
-/* 错误提示：两声短音 */
+/* 错误提示 */
 void ErrorBeep(void)
 {
     u8 i;
@@ -237,7 +228,7 @@ void ErrorBeep(void)
     }
 }
 
-/* S16：确认密码 */
+/* 确认密码 */
 void ConfirmPassword(void)
 {
     u8 i;
@@ -274,7 +265,7 @@ void ConfirmPassword(void)
     }
 }
 
-/* S14：复位 */
+/* 复位 */
 void ResetSystem(void)
 {
     ClearInput();
