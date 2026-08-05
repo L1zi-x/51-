@@ -1,12 +1,12 @@
 //=====================================================================
-// Èý½ÇÖÞÃÜÂë½âËøÐ¡ÓÎÏ·£¨ÆÕÖÐ51¿ª·¢°åÊÊÓÃ£©
-// ¹¦ÄÜ¼ü£º8ºÅ¼ü¸´Î»£¬12ºÅ¼üÍË¸ñ£¬16ºÅ¼üÈ·ÈÏ½øÈëÑéÖ¤
-// ÓÎÏ·Âß¼­£º
-// ½×¶Î1£ºÉèÖÃ5Î»Êý×ÖÃÜÂë£¬Êý×Ö¼üÊäÈë
-// ½×¶Î2£ºÊýÂë¹ÜÊý×Ö×Ô¶¯¹ö¶¯£¬°´16È·ÈÏµ±Ç°Êý×ÖÆ¥ÅäÃÜÂëÎ»£¬ÕýÈ·¶ÌÃù¡¢´íÎó³¤¶Ì½»Ìæ·äÃù
-// ÕýÈ·µÄÃÜÂë»á¹Ì¶¨ÏÔÊ¾£¬ÏÂÒ»Î»¿ªÊ¼ÖØ¸´¹ö¶¯
-// ½×¶Î3£º5Î»È«²¿Æ¥Åä³É¹¦£¬ÍêÕû²¥·ÅÍ¨¹ØÐýÂÉ£¬ÊýÂë¹ÜÏÔÊ¾ÍêÕûÃÜÂë
-// ÏêÇéÇë¿´README,ÒÔÏÂ×¢ÊÍ¾ùÓÉAI±àÐ´
+// ä¸‰è§’æ´²å¯†ç è§£é”å°æ¸¸æˆï¼ˆæ™®ä¸­51å¼€å‘æ¿é€‚ç”¨ï¼‰
+// åŠŸèƒ½é”®ï¼š8å·é”®å¤ä½ï¼Œ12å·é”®é€€æ ¼ï¼Œ16å·é”®ç¡®è®¤è¿›å…¥éªŒè¯
+// æ¸¸æˆé€»è¾‘ï¼š
+// é˜¶æ®µ1ï¼šè®¾ç½®5ä½æ•°å­—å¯†ç ï¼Œæ•°å­—é”®è¾“å…¥
+// é˜¶æ®µ2ï¼šæ•°ç ç®¡æ•°å­—è‡ªåŠ¨æ»šåŠ¨ï¼ŒæŒ‰16ç¡®è®¤å½“å‰æ•°å­—åŒ¹é…å¯†ç ä½ï¼Œæ­£ç¡®çŸ­é¸£ã€é”™è¯¯é•¿çŸ­äº¤æ›¿èœ‚é¸£
+// æ­£ç¡®çš„å¯†ç ä¼šå›ºå®šæ˜¾ç¤ºï¼Œä¸‹ä¸€ä½å¼€å§‹é‡å¤æ»šåŠ¨
+// é˜¶æ®µ3ï¼š5ä½å…¨éƒ¨åŒ¹é…æˆåŠŸï¼Œå®Œæ•´æ’­æ”¾é€šå…³æ—‹å¾‹ï¼Œæ•°ç ç®¡æ˜¾ç¤ºå®Œæ•´å¯†ç 
+// è¯¦æƒ…è¯·çœ‹README,ä»¥ä¸‹æ³¨é‡Šå‡ç”±AIç¼–å†™ï¼Œè¯´å®žè¯æœ‰äº›AIå†™çš„æˆ‘è‡ªå·±ä¹Ÿçœ‹ä¸æ‡‚
 //=====================================================================
 #include <REG52.H>
 
@@ -19,9 +19,9 @@ sbit LSB  = P2^3;
 sbit LSC  = P2^4;
 sbit BEEP = P2^5;
 
-#define PASSWORD_LEN       5       // ÃÜÂë¹Ì¶¨5Î»³¤¶È
-#define DIGIT_COUNT        8       // ¿ª·¢°åÊýÂë¹Ü×Ü¸öÊý8¸ö
-#define KEY_DEBOUNCE_MS    15      // °´¼üÏû¶¶ÎÈ¶¨Ê±³¤15ms
+#define PASSWORD_LEN       5       // å¯†ç å›ºå®š5ä½é•¿åº¦
+#define DIGIT_COUNT        8       // å¼€å‘æ¿æ•°ç ç®¡æ€»ä¸ªæ•°8ä¸ª
+#define KEY_DEBOUNCE_MS    15      // æŒ‰é”®æ¶ˆæŠ–ç¨³å®šæ—¶é•¿15ms
 
 #define T0_RELOAD          (65536U - 922U)
 #define T0_RELOAD_H        ((65536U - 922U) >> 8) 
@@ -29,82 +29,82 @@ sbit BEEP = P2^5;
 
 #define DIGIT_ORDER_REVERSED 1 
 
-// ÏµÍ³ÔËÐÐ×´Ì¬Ã¶¾Ù
+// ç³»ç»Ÿè¿è¡ŒçŠ¶æ€æžšä¸¾
 typedef enum {
-    STATE_SET_PASSWORD = 0,  // ×´Ì¬0£ºÉèÖÃÃÜÂë½çÃæ
-    STATE_VERIFY_PASSWORD,   // ×´Ì¬1£ºÃÜÂëÑéÖ¤ÓÎÏ·½çÃæ
-    STATE_SUCCESS           // ×´Ì¬2£ºÃÜÂëÑéÖ¤³É¹¦Í¨¹Ø½çÃæ
+    STATE_SET_PASSWORD = 0,  // çŠ¶æ€0ï¼šè®¾ç½®å¯†ç ç•Œé¢
+    STATE_VERIFY_PASSWORD,   // çŠ¶æ€1ï¼šå¯†ç éªŒè¯æ¸¸æˆç•Œé¢
+    STATE_SUCCESS           // çŠ¶æ€2ï¼šå¯†ç éªŒè¯æˆåŠŸé€šå…³ç•Œé¢
 } SystemState;
 
-// ·äÃùÆ÷¹¤×÷Ä£Ê½Ã¶¾Ù
+// èœ‚é¸£å™¨å·¥ä½œæ¨¡å¼æžšä¸¾
 typedef enum {
-    BEEP_IDLE = 0,    // Ä£Ê½0£º·äÃùÆ÷¿ÕÏÐ¾²Òô
-    BEEP_ONCE,        // Ä£Ê½1£ºµ¥´Î¶Ì´ÙÌáÊ¾Òô
-    BEEP_ERROR,       // Ä£Ê½2£ºÃÜÂë´íÎó¾¯Ê¾Òô
-    BEEP_MELODY       // Ä£Ê½3£ºÍ¨¹ØÍêÕûÐýÂÉ²¥·Å
+    BEEP_IDLE = 0,    // æ¨¡å¼0ï¼šèœ‚é¸£å™¨ç©ºé—²é™éŸ³
+    BEEP_ONCE,        // æ¨¡å¼1ï¼šå•æ¬¡çŸ­ä¿ƒæç¤ºéŸ³
+    BEEP_ERROR,       // æ¨¡å¼2ï¼šå¯†ç é”™è¯¯è­¦ç¤ºéŸ³
+    BEEP_MELODY       // æ¨¡å¼3ï¼šé€šå…³å®Œæ•´æ—‹å¾‹æ’­æ”¾
 } BeepMode;
 
-// È«¾ÖÖÐ¶Ï±äÁ¿£¬volatile·ÀÖ¹±àÒëÆ÷ÓÅ»¯
-volatile u32 g_ms = 0;               // ÏµÍ³×ÜºÁÃë¼ÆÊ±
-volatile u8 g_scan_pos = 0;          // ÊýÂë¹Ü¶¯Ì¬É¨Ãèµ±Ç°Î»Ë÷Òý
-volatile bit g_beep_enable = 0;      // ·äÃùÆ÷·¢ÉùÊ¹ÄÜ±êÖ¾
-volatile u16 g_t1_reload = 0;        // ¶¨Ê±Æ÷1Òôµ÷³õÖµ»º´æ
-volatile BeepMode g_beep_mode = BEEP_IDLE; // µ±Ç°·äÃù¹¤×÷Ä£Ê½
-volatile u16 g_beep_elapsed = 0;     // ·äÃùÆ÷µ±Ç°·¢Éù¼ÆÊ±
-volatile u16 g_beep_total = 0;       // µ±Ç°·äÃùÄ£Ê½×Ü³ÖÐøÊ±³¤
-volatile bit g_beep_done = 0;        // ·äÃù²¥·ÅÍê³É±êÖ¾Î»
-volatile u8 g_melody_index = 0;      // ÐýÂÉ²¥·ÅÒô·ûË÷Òý
+// å…¨å±€ä¸­æ–­å˜é‡ï¼Œvolatileé˜²æ­¢ç¼–è¯‘å™¨ä¼˜åŒ–
+volatile u32 g_ms = 0;               // ç³»ç»Ÿæ€»æ¯«ç§’è®¡æ—¶
+volatile u8 g_scan_pos = 0;          // æ•°ç ç®¡åŠ¨æ€æ‰«æå½“å‰ä½ç´¢å¼•
+volatile bit g_beep_enable = 0;      // èœ‚é¸£å™¨å‘å£°ä½¿èƒ½æ ‡å¿—
+volatile u16 g_t1_reload = 0;        // å®šæ—¶å™¨1éŸ³è°ƒåˆå€¼ç¼“å­˜
+volatile BeepMode g_beep_mode = BEEP_IDLE; // å½“å‰èœ‚é¸£å·¥ä½œæ¨¡å¼
+volatile u16 g_beep_elapsed = 0;     // èœ‚é¸£å™¨å½“å‰å‘å£°è®¡æ—¶
+volatile u16 g_beep_total = 0;       // å½“å‰èœ‚é¸£æ¨¡å¼æ€»æŒç»­æ—¶é•¿
+volatile bit g_beep_done = 0;        // èœ‚é¸£æ’­æ”¾å®Œæˆæ ‡å¿—ä½
+volatile u8 g_melody_index = 0;      // æ—‹å¾‹æ’­æ”¾éŸ³ç¬¦ç´¢å¼•
 
-// ÓÎÏ·ÒµÎñÈ«¾Ö±äÁ¿
-SystemState g_state = STATE_SET_PASSWORD; // ÏµÍ³Ä¬ÈÏ³õÊ¼×´Ì¬£ºÉèÖÃÃÜÂë
-u8 g_password[PASSWORD_LEN] = {0};        // ´æ´¢ÓÃ»§ÉèÖÃµÄ5Î»ÃÜÂëÊý×é
-u8 g_input_len = 0;                       // ÉèÖÃÃÜÂëÊ±ÒÑÊäÈëÎ»Êý¼ÆÊý
-u8 g_verify_index = 0;                    // ÑéÖ¤ÃÜÂëµ±Ç°Æ¥Åäµ½µÚ¼¸Î»
-u8 g_roll_num = 1;                        // ÑéÖ¤½çÃæ×Ô¶¯¹ö¶¯µÄÊý×Ö
-u16 g_roll_elapsed = 0;                   // Êý×Ö¹ö¶¯ºÁÃë¼ÆÊ±Æ÷
-bit g_wait_beep_result = 0;               // µÈ´ý·äÃù²¥·ÅÍê³ÉÔÙÇÐ»»ÏÂÒ»Î»±êÖ¾
-bit g_pending_correct = 0;                // ÔÝ´æµ±Ç°ÃÜÂëÎ»ÊÇ·ñÆ¥ÅäÕýÈ·
+// æ¸¸æˆä¸šåŠ¡å…¨å±€å˜é‡
+SystemState g_state = STATE_SET_PASSWORD; // ç³»ç»Ÿé»˜è®¤åˆå§‹çŠ¶æ€ï¼šè®¾ç½®å¯†ç 
+u8 g_password[PASSWORD_LEN] = {0};        // å­˜å‚¨ç”¨æˆ·è®¾ç½®çš„5ä½å¯†ç æ•°ç»„
+u8 g_input_len = 0;                       // è®¾ç½®å¯†ç æ—¶å·²è¾“å…¥ä½æ•°è®¡æ•°
+u8 g_verify_index = 0;                    // éªŒè¯å¯†ç å½“å‰åŒ¹é…åˆ°ç¬¬å‡ ä½
+u8 g_roll_num = 1;                        // éªŒè¯ç•Œé¢è‡ªåŠ¨æ»šåŠ¨çš„æ•°å­—
+u16 g_roll_elapsed = 0;                   // æ•°å­—æ»šåŠ¨æ¯«ç§’è®¡æ—¶å™¨
+bit g_wait_beep_result = 0;               // ç­‰å¾…èœ‚é¸£æ’­æ”¾å®Œæˆå†åˆ‡æ¢ä¸‹ä¸€ä½æ ‡å¿—
+bit g_pending_correct = 0;                // æš‚å­˜å½“å‰å¯†ç ä½æ˜¯å¦åŒ¹é…æ­£ç¡®
 
-#define SEG_COMMON_ANODE 0  // ÊýÂë¹ÜÀàÐÍÑ¡Ôñ£º0=¹²Òõ¼« 1=¹²Ñô¼«
+#define SEG_COMMON_ANODE 0  // æ•°ç ç®¡ç±»åž‹é€‰æ‹©ï¼š0=å…±é˜´æž 1=å…±é˜³æž
 #if SEG_COMMON_ANODE
-// ¹²Ñô¼«ÊýÂë¹Ü¶ÎÂë£¬Ï¨ÃðÂë0xFF
+// å…±é˜³æžæ•°ç ç®¡æ®µç ï¼Œç†„ç­ç 0xFF
 #define SEG_BLANK 0xFF
 code u8 SEG_CODE[10] = {
-    0xC0, // Êý×Ö0
-    0xF9, // Êý×Ö1
-    0xA4, // Êý×Ö2
-    0xB0, // Êý×Ö3
-    0x99, // Êý×Ö4
-    0x92, // Êý×Ö5
-    0x82, // Êý×Ö6
-    0xF8, // Êý×Ö7
-    0x80, // Êý×Ö8
-    0x90  // Êý×Ö9
+    0xC0, // æ•°å­—0
+    0xF9, // æ•°å­—1
+    0xA4, // æ•°å­—2
+    0xB0, // æ•°å­—3
+    0x99, // æ•°å­—4
+    0x92, // æ•°å­—5
+    0x82, // æ•°å­—6
+    0xF8, // æ•°å­—7
+    0x80, // æ•°å­—8
+    0x90  // æ•°å­—9
 };
 #else
-// ¹²Òõ¼«ÊýÂë¹Ü¶ÎÂë£¬Ï¨ÃðÂë0x00
+// å…±é˜´æžæ•°ç ç®¡æ®µç ï¼Œç†„ç­ç 0x00
 #define SEG_BLANK 0x00
 code u8 SEG_CODE[10] = {
-    0x3F, // Êý×Ö0
-    0x06, // Êý×Ö1
-    0x5B, // Êý×Ö2
-    0x4F, // Êý×Ö3
-    0x66, // Êý×Ö4
-    0x6D, // Êý×Ö5
-    0x7D, // Êý×Ö6
-    0x07, // Êý×Ö7
-    0x7F, // Êý×Ö8
-    0x6F  // Êý×Ö9
+    0x3F, // æ•°å­—0
+    0x06, // æ•°å­—1
+    0x5B, // æ•°å­—2
+    0x4F, // æ•°å­—3
+    0x66, // æ•°å­—4
+    0x6D, // æ•°å­—5
+    0x7D, // æ•°å­—6
+    0x07, // æ•°å­—7
+    0x7F, // æ•°å­—8
+    0x6F  // æ•°å­—9
 };
 #endif
 
-volatile u8 g_disp[DIGIT_COUNT] = { // 8Î»ÊýÂë¹ÜÏÔÊ¾»º´æÊý×é£¬ÉÏµçÈ«Ï¨Ãð
+volatile u8 g_disp[DIGIT_COUNT] = { // 8ä½æ•°ç ç®¡æ˜¾ç¤ºç¼“å­˜æ•°ç»„ï¼Œä¸Šç”µå…¨ç†„ç­
     SEG_BLANK, SEG_BLANK, SEG_BLANK, SEG_BLANK,
     SEG_BLANK, SEG_BLANK, SEG_BLANK, SEG_BLANK
 };
 
-// ·äÃùÆ÷ÐýÂÉÒô·ûÆµÂÊºê¶¨Òå£¬µ¥Î»Hz
-#define NOTE_REST 0     // ÐÝÖ¹·û£¬²»·¢Éù
+// èœ‚é¸£å™¨æ—‹å¾‹éŸ³ç¬¦é¢‘çŽ‡å®å®šä¹‰ï¼Œå•ä½Hz
+#define NOTE_REST 0     // ä¼‘æ­¢ç¬¦ï¼Œä¸å‘å£°
 #define NOTE_G4   392
 #define NOTE_C5   523
 #define NOTE_E5   659
@@ -119,44 +119,44 @@ volatile u8 g_disp[DIGIT_COUNT] = { // 8Î»ÊýÂë¹ÜÏÔÊ¾»º´æÊý×é£¬ÉÏµçÈ«Ï¨Ãð
 #define NOTE_DS5  622
 #define NOTE_GS5  831
 
-// Í¨¹ØÐýÂÉÒô·ûÆµÂÊ±í£¬code´æ³ÌÐòFlash½ÚÊ¡RAM
+// é€šå…³æ—‹å¾‹éŸ³ç¬¦é¢‘çŽ‡è¡¨ï¼Œcodeå­˜ç¨‹åºFlashèŠ‚çœRAM
 code u16 MELODY_FREQ[] = {
     NOTE_G4, NOTE_C5, NOTE_E5, NOTE_G5, NOTE_C6, NOTE_E6, NOTE_G6,
     NOTE_E6B, NOTE_GS4, NOTE_C5, NOTE_DS5, NOTE_GS5, NOTE_C6,
     NOTE_REST
 };
-// ¶ÔÓ¦Ã¿¸öÒô·û³ÖÐøÊ±³¤£¬µ¥Î»ms£¬Ä©Î²0´ú±íÐýÂÉ½áÊø
+// å¯¹åº”æ¯ä¸ªéŸ³ç¬¦æŒç»­æ—¶é•¿ï¼Œå•ä½msï¼Œæœ«å°¾0ä»£è¡¨æ—‹å¾‹ç»“æŸ
 code u16 MELODY_DUR[] = {
     90, 90, 90, 90, 90, 90, 260,
     120, 90, 90, 90, 90, 300,
     0
 };
 
-// º¯ÊýÇ°ÖÃÉùÃ÷
-static void Display_Clear(void);         // Çå¿ÕËùÓÐÊýÂë¹ÜÏÔÊ¾
-static void System_Reset(void);           // ÏµÍ³È«¾Ö¸´Î»
-static void State_SetPassword_Init(void); // ³õÊ¼»¯ÉèÖÃÃÜÂë½çÃæ²ÎÊý
-static void State_Verify_Init(void);     // ³õÊ¼»¯ÃÜÂëÑéÖ¤ÓÎÏ·½çÃæ²ÎÊý
-static void State_Success_Init(void);     // ³õÊ¼»¯ÑéÖ¤³É¹¦Í¨¹Ø½çÃæ
-static void Beep_Stop(void);              // Í£Ö¹·äÃùÆ÷ËùÓÐ·¢Éù
-static void Beep_StartOnce(u16 freq, u16 duration_ms); // ²¥·Åµ¥´ÎÌáÊ¾Òô
-static void Beep_StartError(void);        // ²¥·ÅÃÜÂë´íÎóÌáÊ¾Òô
-static void Beep_StartMelody(void);       // ²¥·ÅÍêÕûÍ¨¹ØÐýÂÉ
+// å‡½æ•°å‰ç½®å£°æ˜Ž
+static void Display_Clear(void);         // æ¸…ç©ºæ‰€æœ‰æ•°ç ç®¡æ˜¾ç¤º
+static void System_Reset(void);           // ç³»ç»Ÿå…¨å±€å¤ä½
+static void State_SetPassword_Init(void); // åˆå§‹åŒ–è®¾ç½®å¯†ç ç•Œé¢å‚æ•°
+static void State_Verify_Init(void);     // åˆå§‹åŒ–å¯†ç éªŒè¯æ¸¸æˆç•Œé¢å‚æ•°
+static void State_Success_Init(void);     // åˆå§‹åŒ–éªŒè¯æˆåŠŸé€šå…³ç•Œé¢
+static void Beep_Stop(void);              // åœæ­¢èœ‚é¸£å™¨æ‰€æœ‰å‘å£°
+static void Beep_StartOnce(u16 freq, u16 duration_ms); // æ’­æ”¾å•æ¬¡æç¤ºéŸ³
+static void Beep_StartError(void);        // æ’­æ”¾å¯†ç é”™è¯¯æç¤ºéŸ³
+static void Beep_StartMelody(void);       // æ’­æ”¾å®Œæ•´é€šå…³æ—‹å¾‹
 
-// ¸ù¾Ý·¢ÉùÆµÂÊ¼ÆËã¶¨Ê±Æ÷1×Ô¶¯ÖØ×°³õÖµ
+// æ ¹æ®å‘å£°é¢‘çŽ‡è®¡ç®—å®šæ—¶å™¨1è‡ªåŠ¨é‡è£…åˆå€¼
 static u16 Timer1ReloadByFreq(u16 freq)
 {
     u32 half_counts;
-    if (freq == 0) { // ÆµÂÊ0´ú±íÐÝÖ¹·û£¬ÎÞ³õÖµ
+    if (freq == 0) { // é¢‘çŽ‡0ä»£è¡¨ä¼‘æ­¢ç¬¦ï¼Œæ— åˆå€¼
         return 0;
     }
-    // 11.0592MHzÏµÍ³Ê±ÖÓ£¬¼ÆËã°ë¸öÉù²¨ÖÜÆÚÐèÒª¼ÆÊý´ÎÊý
+    // 11.0592MHzç³»ç»Ÿæ—¶é’Ÿï¼Œè®¡ç®—åŠä¸ªå£°æ³¢å‘¨æœŸéœ€è¦è®¡æ•°æ¬¡æ•°
     half_counts = 921600UL / ((u32)freq * 2UL);
-    // 65536¼õÈ¥°ëÖÜÆÚ¼ÆÊý£¬µÃµ½¶¨Ê±Æ÷ÖØ×°Öµ
+    // 65536å‡åŽ»åŠå‘¨æœŸè®¡æ•°ï¼Œå¾—åˆ°å®šæ—¶å™¨é‡è£…å€¼
     return (u16)(65536UL - half_counts);
 }
 
-// Èí¼þºÁÃëÑÓÊ±º¯Êý£¬ÓÃÓÚ°´¼üÏû¶¶¶ÌÔÝµÈ´ý
+// è½¯ä»¶æ¯«ç§’å»¶æ—¶å‡½æ•°ï¼Œç”¨äºŽæŒ‰é”®æ¶ˆæŠ–çŸ­æš‚ç­‰å¾…
 static void DelayMsSoft(u8 ms)
 {
     u8 i, j;
@@ -167,45 +167,45 @@ static void DelayMsSoft(u8 ms)
     }
 }
 
-// ¶¨Ê±Æ÷³õÊ¼»¯º¯Êý£ºT0²úÉú1msÊ±»ù£¬T1¿ØÖÆ·äÃùÆ÷Òôµ÷
+// å®šæ—¶å™¨åˆå§‹åŒ–å‡½æ•°ï¼šT0äº§ç”Ÿ1msæ—¶åŸºï¼ŒT1æŽ§åˆ¶èœ‚é¸£å™¨éŸ³è°ƒ
 static void Timer_Init(void)
 {
     TMOD &= 0x00;
-    TMOD |= 0x11;          // ÉèÖÃT0¡¢T1¾ùÎª¹¤×÷Ä£Ê½1£¨16Î»¶¨Ê±Æ÷£©
-    // ÅäÖÃ¶¨Ê±Æ÷0
+    TMOD |= 0x11;          // è®¾ç½®T0ã€T1å‡ä¸ºå·¥ä½œæ¨¡å¼1ï¼ˆ16ä½å®šæ—¶å™¨ï¼‰
+    // é…ç½®å®šæ—¶å™¨0
     TH0 = T0_RELOAD_H;
     TL0 = T0_RELOAD_L;
-    ET0 = 1;               // Ê¹ÄÜ¶¨Ê±Æ÷0ÖÐ¶Ï
-    TR0 = 1;               // ¿ªÆô¶¨Ê±Æ÷0¼ÆÊý
-    // ÅäÖÃ¶¨Ê±Æ÷1³õÊ¼×´Ì¬
+    ET0 = 1;               // ä½¿èƒ½å®šæ—¶å™¨0ä¸­æ–­
+    TR0 = 1;               // å¼€å¯å®šæ—¶å™¨0è®¡æ•°
+    // é…ç½®å®šæ—¶å™¨1åˆå§‹çŠ¶æ€
     TH1 = 0;
     TL1 = 0;
-    ET1 = 1;               // Ê¹ÄÜ¶¨Ê±Æ÷1ÖÐ¶Ï
-    TR1 = 0;               // Ä¬ÈÏ¹Ø±Õ¶¨Ê±Æ÷1£¨·äÃùÆ÷¾²Òô£©
-    EA = 1;                // ¿ªÆô×ÜÖÐ¶ÏÔÊÐí
+    ET1 = 1;               // ä½¿èƒ½å®šæ—¶å™¨1ä¸­æ–­
+    TR1 = 0;               // é»˜è®¤å…³é—­å®šæ—¶å™¨1ï¼ˆèœ‚é¸£å™¨é™éŸ³ï¼‰
+    EA = 1;                // å¼€å¯æ€»ä¸­æ–­å…è®¸
 }
 
-// 74HC138ÒëÂëÑ¡ÖÐÖ¸¶¨Î»ÖÃÊýÂë¹Ü£¬posÎªÂß¼­ÏÔÊ¾Î»ÖÃ
+// 74HC138è¯‘ç é€‰ä¸­æŒ‡å®šä½ç½®æ•°ç ç®¡ï¼Œposä¸ºé€»è¾‘æ˜¾ç¤ºä½ç½®
 static void Digit_Select(u8 pos)
 {
 #if DIGIT_ORDER_REVERSED
-    pos = 7 - pos; // Î»Ðò·´×ª£¬ÊÊÅä¿ª·¢°åÓ²¼þ×óÓÒµßµ¹
+    pos = 7 - pos; // ä½åºåè½¬ï¼Œé€‚é…å¼€å‘æ¿ç¡¬ä»¶å·¦å³é¢ å€’
 #endif
-    // ²ð·Ö3Î»µØÖ·ËÍÈëÒëÂëÆ÷Òý½Å
+    // æ‹†åˆ†3ä½åœ°å€é€å…¥è¯‘ç å™¨å¼•è„š
     LSA = pos & 0x01;
     LSB = (pos >> 1) & 0x01;
     LSC = (pos >> 2) & 0x01;
 }
 
-// Ö¸¶¨Î»ÖÃÊýÂë¹ÜÏÔÊ¾µ¥¸öÊý×Ö0~9
+// æŒ‡å®šä½ç½®æ•°ç ç®¡æ˜¾ç¤ºå•ä¸ªæ•°å­—0~9
 static void Display_SetDigit(u8 pos, u8 num)
 {
-    if (pos < DIGIT_COUNT && num <= 9) { // ±ß½çÐ£Ñé·ÀÖ¹Ô½½ç
+    if (pos < DIGIT_COUNT && num <= 9) { // è¾¹ç•Œæ ¡éªŒé˜²æ­¢è¶Šç•Œ
         g_disp[pos] = SEG_CODE[num];
     }
 }
 
-// Ï¨ÃðÖ¸¶¨Î»ÖÃÊýÂë¹Ü
+// ç†„ç­æŒ‡å®šä½ç½®æ•°ç ç®¡
 static void Display_BlankDigit(u8 pos)
 {
     if (pos < DIGIT_COUNT) {
@@ -213,7 +213,7 @@ static void Display_BlankDigit(u8 pos)
     }
 }
 
-// Çå¿ÕÈ«²¿8¸öÊýÂë¹ÜÏÔÊ¾»º´æ
+// æ¸…ç©ºå…¨éƒ¨8ä¸ªæ•°ç ç®¡æ˜¾ç¤ºç¼“å­˜
 static void Display_Clear(void)
 {
     u8 i;
@@ -222,14 +222,14 @@ static void Display_Clear(void)
     }
 }
 
-// µ×²ã4*4¾ØÕó¼üÅÌÉ¨Ãè£¬·µ»ØÔ­Ê¼°´¼ü±àºÅ1~16£¬ÎÞ°´¼ü·µ»Ø0
+// åº•å±‚4*4çŸ©é˜µé”®ç›˜æ‰«æï¼Œè¿”å›žåŽŸå§‹æŒ‰é”®ç¼–å·1~16ï¼Œæ— æŒ‰é”®è¿”å›ž0
 static u8 Key_ReadRaw(void)
 {
     u8 key = 0;
-    // µÚÒ»ÐÐÉ¨Ãè£ºP1.4Êä³öµÍµçÆ½£¬¶ÁÈ¡P1¸ßËÄÎ»ÅÐ¶ÏÁÐ
+    // ç¬¬ä¸€è¡Œæ‰«æï¼šP1.4è¾“å‡ºä½Žç”µå¹³ï¼Œè¯»å–P1é«˜å››ä½åˆ¤æ–­åˆ—
     P1 = 0xF7;
     if (P1 != 0xF7) {
-        DelayMsSoft(1); // ¶ÌÔÝÑÓÊ±¼òµ¥Ïû¶¶
+        DelayMsSoft(1); // çŸ­æš‚å»¶æ—¶ç®€å•æ¶ˆæŠ–
         if (P1 != 0xF7) {
             switch (P1 & 0xF0) {
                 case 0x70: key = 1; break;
@@ -240,7 +240,7 @@ static u8 Key_ReadRaw(void)
             }
         }
     }
-    // µÚ¶þÐÐÉ¨Ãè£ºP1.5Êä³öµÍµçÆ½
+    // ç¬¬äºŒè¡Œæ‰«æï¼šP1.5è¾“å‡ºä½Žç”µå¹³
     P1 = 0xFB;
     if (P1 != 0xFB) {
         DelayMsSoft(1);
@@ -254,7 +254,7 @@ static u8 Key_ReadRaw(void)
             }
         }
     }
-    // µÚÈýÐÐÉ¨Ãè£ºP1.6Êä³öµÍµçÆ½
+    // ç¬¬ä¸‰è¡Œæ‰«æï¼šP1.6è¾“å‡ºä½Žç”µå¹³
     P1 = 0xFD;
     if (P1 != 0xFD) {
         DelayMsSoft(1);
@@ -268,7 +268,7 @@ static u8 Key_ReadRaw(void)
             }
         }
     }
-    // µÚËÄÐÐÉ¨Ãè£ºP1.7Êä³öµÍµçÆ½
+    // ç¬¬å››è¡Œæ‰«æï¼šP1.7è¾“å‡ºä½Žç”µå¹³
     P1 = 0xFE;
     if (P1 != 0xFE) {
         DelayMsSoft(1);
@@ -282,35 +282,35 @@ static u8 Key_ReadRaw(void)
             }
         }
     }
-    P1 = 0xFF; // É¨ÃèÍê³É£¬È«²¿ÐÐÖÃ¸ßµçÆ½
+    P1 = 0xFF; // æ‰«æå®Œæˆï¼Œå…¨éƒ¨è¡Œç½®é«˜ç”µå¹³
     return key;
 }
 
-// ´ø15msÓ²¼þÏû¶¶´¦Àí£¬°´ÏÂÖ»·µ»ØÒ»´Î°´¼üÖµ£¬³¤°´²»ÖØ¸´´¥·¢
+// å¸¦15msç¡¬ä»¶æ¶ˆæŠ–å¤„ç†ï¼ŒæŒ‰ä¸‹åªè¿”å›žä¸€æ¬¡æŒ‰é”®å€¼ï¼Œé•¿æŒ‰ä¸é‡å¤è§¦å‘
 static u8 Key_GetClick(void)
 {
-    static u8 last_raw = 0;       // ÉÏÒ»´Î¶ÁÈ¡µ½µÄÔ­Ê¼°´¼üÖµ
-    static u8 stable_key = 0;     // Ïû¶¶ÎÈ¶¨ºóµÄ°´¼üÖµ
-    static u8 pressed_latch = 0;  // °´¼ü°´ÏÂËø´æ±êÖ¾£¬·ÀÖ¹Á¬°´
-    static u32 last_change_ms = 0;// °´¼üµçÆ½±ä»¯¼ÇÂ¼Ê±¼ä´Á
+    static u8 last_raw = 0;       // ä¸Šä¸€æ¬¡è¯»å–åˆ°çš„åŽŸå§‹æŒ‰é”®å€¼
+    static u8 stable_key = 0;     // æ¶ˆæŠ–ç¨³å®šåŽçš„æŒ‰é”®å€¼
+    static u8 pressed_latch = 0;  // æŒ‰é”®æŒ‰ä¸‹é”å­˜æ ‡å¿—ï¼Œé˜²æ­¢è¿žæŒ‰
+    static u32 last_change_ms = 0;// æŒ‰é”®ç”µå¹³å˜åŒ–è®°å½•æ—¶é—´æˆ³
     u8 raw = Key_ReadRaw();
     u8 click = 0;
 
-    // ¼ì²â°´¼üµçÆ½·¢Éú±ä»¯£¬¸üÐÂÊ±¼ä´Á
+    // æ£€æµ‹æŒ‰é”®ç”µå¹³å‘ç”Ÿå˜åŒ–ï¼Œæ›´æ–°æ—¶é—´æˆ³
     if (raw != last_raw) {
         last_raw = raw;
         last_change_ms = g_ms;
     }
-    // µÈ´ý15msÏû¶¶ÎÈ¶¨
+    // ç­‰å¾…15msæ¶ˆæŠ–ç¨³å®š
     if ((u16)(g_ms - last_change_ms) >= KEY_DEBOUNCE_MS) {
         if (stable_key != raw) {
             stable_key = raw;
-            // °´¼ü°´ÏÂÇÒÎÞËø´æ£¬Êä³öÒ»´Î°´¼üµã»÷
+            // æŒ‰é”®æŒ‰ä¸‹ä¸”æ— é”å­˜ï¼Œè¾“å‡ºä¸€æ¬¡æŒ‰é”®ç‚¹å‡»
             if (stable_key != 0 && pressed_latch == 0) {
                 click = stable_key;
                 pressed_latch = stable_key;
             }
-            // °´¼üËÉ¿ª£¬Çå³ýËø´æ±êÖ¾£¬ÔÊÐíÏÂ´Îµã»÷
+            // æŒ‰é”®æ¾å¼€ï¼Œæ¸…é™¤é”å­˜æ ‡å¿—ï¼Œå…è®¸ä¸‹æ¬¡ç‚¹å‡»
             if (stable_key == 0) {
                 pressed_latch = 0;
             }
@@ -319,19 +319,19 @@ static u8 Key_GetClick(void)
     return click;
 }
 
-// ¹Ø±Õ·äÃùÆ÷£¬ÖØÖÃËùÓÐ·äÃùÏà¹Ø×´Ì¬±äÁ¿
+// å…³é—­èœ‚é¸£å™¨ï¼Œé‡ç½®æ‰€æœ‰èœ‚é¸£ç›¸å…³çŠ¶æ€å˜é‡
 static void Beep_Stop(void)
 {
-    TR1 = 0;                 // ¹Ø±Õ¶¨Ê±Æ÷1Í£Ö¹Òôµ÷Êä³ö
+    TR1 = 0;                 // å…³é—­å®šæ—¶å™¨1åœæ­¢éŸ³è°ƒè¾“å‡º
     g_beep_enable = 0;
-    BEEP = 1;                // ÎÞÔ´·äÃùÆ÷¸ßµçÆ½¾²Òô
+    BEEP = 1;                // æ— æºèœ‚é¸£å™¨é«˜ç”µå¹³é™éŸ³
     g_beep_mode = BEEP_IDLE;
     g_beep_elapsed = 0;
     g_beep_total = 0;
     g_beep_done = 1;
 }
 
-// ÉèÖÃ·äÃùÆ÷·¢ÉùÆµÂÊ£¬freq=0¾²Òô£¬·Ç0Æô¶¯¶¨Ê±Æ÷Êä³ö·½²¨
+// è®¾ç½®èœ‚é¸£å™¨å‘å£°é¢‘çŽ‡ï¼Œfreq=0é™éŸ³ï¼Œéž0å¯åŠ¨å®šæ—¶å™¨è¾“å‡ºæ–¹æ³¢
 static void Beep_SetFreq(u16 freq)
 {
     if (freq == 0) {
@@ -343,11 +343,11 @@ static void Beep_SetFreq(u16 freq)
         TH1 = g_t1_reload >> 8;
         TL1 = g_t1_reload & 0xFF;
         g_beep_enable = 1;
-        TR1 = 1; // Æô¶¯¶¨Ê±Æ÷1²úÉú·½²¨Çý¶¯·äÃùÆ÷
+        TR1 = 1; // å¯åŠ¨å®šæ—¶å™¨1äº§ç”Ÿæ–¹æ³¢é©±åŠ¨èœ‚é¸£å™¨
     }
 }
 
-// Æô¶¯µ¥´Î¹Ì¶¨Ê±³¤ÌáÊ¾Òô
+// å¯åŠ¨å•æ¬¡å›ºå®šæ—¶é•¿æç¤ºéŸ³
 static void Beep_StartOnce(u16 freq, u16 duration_ms)
 {
     g_beep_mode = BEEP_ONCE;
@@ -357,7 +357,7 @@ static void Beep_StartOnce(u16 freq, u16 duration_ms)
     Beep_SetFreq(freq);
 }
 
-// Æô¶¯ÃÜÂë´íÎóÌáÊ¾Òô£º2000Hz¶ÏÐø·äÃù£¬×ÜÊ±³¤300ms
+// å¯åŠ¨å¯†ç é”™è¯¯æç¤ºéŸ³ï¼š2000Hzæ–­ç»­èœ‚é¸£ï¼Œæ€»æ—¶é•¿300ms
 static void Beep_StartError(void)
 {
     g_beep_mode = BEEP_ERROR;
@@ -367,7 +367,7 @@ static void Beep_StartError(void)
     Beep_SetFreq(2000);
 }
 
-// Æô¶¯Í¨¹ØÍêÕûÐýÂÉ²¥·Å
+// å¯åŠ¨é€šå…³å®Œæ•´æ—‹å¾‹æ’­æ”¾
 static void Beep_StartMelody(void)
 {
     g_beep_mode = BEEP_MELODY;
@@ -377,7 +377,7 @@ static void Beep_StartMelody(void)
     Beep_SetFreq(MELODY_FREQ[0]);
 }
 
-// ³õÊ¼»¯ÉèÖÃÃÜÂë½çÃæ£¬ÖØÖÃËùÓÐÊäÈëÏà¹Ø±äÁ¿£¬Çå¿ÕÊýÂë¹Ü
+// åˆå§‹åŒ–è®¾ç½®å¯†ç ç•Œé¢ï¼Œé‡ç½®æ‰€æœ‰è¾“å…¥ç›¸å…³å˜é‡ï¼Œæ¸…ç©ºæ•°ç ç®¡
 static void State_SetPassword_Init(void)
 {
     u8 i;
@@ -388,14 +388,14 @@ static void State_SetPassword_Init(void)
     g_roll_elapsed = 0;
     g_wait_beep_result = 0;
     g_pending_correct = 0;
-    // Çå¿ÕÃÜÂë´æ´¢Êý×é
+    // æ¸…ç©ºå¯†ç å­˜å‚¨æ•°ç»„
     for (i = 0; i < PASSWORD_LEN; i++) {
         g_password[i] = 0;
     }
     Display_Clear();
 }
 
-// ³õÊ¼»¯ÃÜÂëÑéÖ¤ÓÎÏ·½çÃæ£¬Çå¿ÕÆÁÄ»£¬µÚÒ»Î»ÏÔÊ¾¹ö¶¯Êý×Ö1
+// åˆå§‹åŒ–å¯†ç éªŒè¯æ¸¸æˆç•Œé¢ï¼Œæ¸…ç©ºå±å¹•ï¼Œç¬¬ä¸€ä½æ˜¾ç¤ºæ»šåŠ¨æ•°å­—1
 static void State_Verify_Init(void)
 {
     g_state = STATE_VERIFY_PASSWORD;
@@ -408,131 +408,131 @@ static void State_Verify_Init(void)
     Display_SetDigit(0, g_roll_num);
 }
 
-// ÑéÖ¤³É¹¦½çÃæ£ºÊýÂë¹ÜÏÔÊ¾ÍêÕû5Î»ÃÜÂë£¬²¥·ÅÍ¨¹ØÐýÂÉ
+// éªŒè¯æˆåŠŸç•Œé¢ï¼šæ•°ç ç®¡æ˜¾ç¤ºå®Œæ•´5ä½å¯†ç ï¼Œæ’­æ”¾é€šå…³æ—‹å¾‹
 static void State_Success_Init(void)
 {
     u8 i;
     g_state = STATE_SUCCESS;
     Display_Clear();
-    // ÒÀ´Î°Ñ5Î»ÃÜÂëÏÔÊ¾ÔÚÊýÂë¹ÜÇ°5Î»
+    // ä¾æ¬¡æŠŠ5ä½å¯†ç æ˜¾ç¤ºåœ¨æ•°ç ç®¡å‰5ä½
     for (i = 0; i < PASSWORD_LEN; i++) {
         Display_SetDigit(i, g_password[i]);
     }
     Beep_StartMelody();
 }
 
-// ÏµÍ³¸´Î»º¯Êý£ºÍ£Ö¹·äÃùÆ÷£¬ÇÐ»ØÉèÖÃÃÜÂë³õÊ¼½çÃæ
+// ç³»ç»Ÿå¤ä½å‡½æ•°ï¼šåœæ­¢èœ‚é¸£å™¨ï¼Œåˆ‡å›žè®¾ç½®å¯†ç åˆå§‹ç•Œé¢
 static void System_Reset(void)
 {
     Beep_Stop();
     State_SetPassword_Init();
 }
 
-// ÉèÖÃÃÜÂë½×¶Î°´¼ü´¦Àíº¯Êý
+// è®¾ç½®å¯†ç é˜¶æ®µæŒ‰é”®å¤„ç†å‡½æ•°
 static void Handle_SetPassword(u8 key)
 {
-    if (key >= 1 && key <= 9) { // Êý×Ö1~9ÊäÈëÃÜÂë
-        if (g_input_len < PASSWORD_LEN) { // Î´ÊäÂú5Î»ÔÊÐíÂ¼Èë
+    if (key >= 1 && key <= 9) { // æ•°å­—1~9è¾“å…¥å¯†ç 
+        if (g_input_len < PASSWORD_LEN) { // æœªè¾“æ»¡5ä½å…è®¸å½•å…¥
             g_password[g_input_len] = key;
             Display_SetDigit(g_input_len, key);
             g_input_len++;
-            Beep_StartOnce(1000, 100); // ÊäÈë³É¹¦¶ÌÃùÌáÊ¾
+            Beep_StartOnce(1000, 100); // è¾“å…¥æˆåŠŸçŸ­é¸£æç¤º
         }
-    } else if (key == 15) { // 15ºÅ¼üÍË¸ñÉ¾³ý×îºóÒ»Î»
+    } else if (key == 15) { // 15å·é”®é€€æ ¼åˆ é™¤æœ€åŽä¸€ä½
         if (g_input_len > 0) {
             g_input_len--;
             g_password[g_input_len] = 0;
             Display_BlankDigit(g_input_len);
         }
-    } else if (key == 16) { // 16ºÅÈ·ÈÏ¼ü£¬ÊäÂú5Î»½øÈëÑéÖ¤ÓÎÏ·
+    } else if (key == 16) { // 16å·ç¡®è®¤é”®ï¼Œè¾“æ»¡5ä½è¿›å…¥éªŒè¯æ¸¸æˆ
         if (g_input_len == PASSWORD_LEN) {
             State_Verify_Init();
         }
     }
 }
 
-// ÃÜÂëÑéÖ¤½×¶Î°´¼ü´¦Àíº¯Êý£¬½ö16ºÅÈ·ÈÏ¼üÉúÐ§
+// å¯†ç éªŒè¯é˜¶æ®µæŒ‰é”®å¤„ç†å‡½æ•°ï¼Œä»…16å·ç¡®è®¤é”®ç”Ÿæ•ˆ
 static void Handle_Verify(u8 key)
 {
-    // ·ÇÈ·ÈÏ¼ü »ò µ±Ç°ÕýÔÚ²¥·Å·äÃù£¬²»´¦Àí°´¼ü
+    // éžç¡®è®¤é”® æˆ– å½“å‰æ­£åœ¨æ’­æ”¾èœ‚é¸£ï¼Œä¸å¤„ç†æŒ‰é”®
     if (key != 16 || g_wait_beep_result) {
         return;
     }
-    // µ±Ç°¹ö¶¯Êý×ÖÓëÃÜÂë¶ÔÓ¦Î»Æ¥Åä
+    // å½“å‰æ»šåŠ¨æ•°å­—ä¸Žå¯†ç å¯¹åº”ä½åŒ¹é…
     if (g_roll_num == g_password[g_verify_index]) {
         g_pending_correct = 1;
         g_wait_beep_result = 1;
         Beep_StartOnce(500, 300);
-    } else { // Êý×Ö²»Æ¥Åä£¬²¥·Å´íÎó·äÃù
+    } else { // æ•°å­—ä¸åŒ¹é…ï¼Œæ’­æ”¾é”™è¯¯èœ‚é¸£
         g_pending_correct = 0;
         g_wait_beep_result = 1;
         Beep_StartError();
     }
 }
 
-// ·äÃù²¥·ÅÍê³ÉºóÖ´ÐÐºóÐøÂß¼­£ºÇÐ»»ÏÂÒ»Î»ÃÜÂëÑéÖ¤
+// èœ‚é¸£æ’­æ”¾å®ŒæˆåŽæ‰§è¡ŒåŽç»­é€»è¾‘ï¼šåˆ‡æ¢ä¸‹ä¸€ä½å¯†ç éªŒè¯
 static void Verify_AfterBeep(void)
 {
-    // Î´µÈ´ý·äÃù¡¢·äÃùÎ´²¥·ÅÍê³ÉÖ±½ÓÍË³ö
+    // æœªç­‰å¾…èœ‚é¸£ã€èœ‚é¸£æœªæ’­æ”¾å®Œæˆç›´æŽ¥é€€å‡º
     if (!g_wait_beep_result || !g_beep_done) {
         return;
     }
     g_wait_beep_result = 0;
-    if (g_pending_correct) { // µ±Ç°Î»Æ¥Åä³É¹¦
-        Display_SetDigit(g_verify_index, g_roll_num); // ¹Ì¶¨ÏÔÊ¾ÕýÈ·Êý×Ö
+    if (g_pending_correct) { // å½“å‰ä½åŒ¹é…æˆåŠŸ
+        Display_SetDigit(g_verify_index, g_roll_num); // å›ºå®šæ˜¾ç¤ºæ­£ç¡®æ•°å­—
         g_verify_index++;
-        // 5Î»ÃÜÂëÈ«²¿Æ¥Åä£¬½øÈëÍ¨¹Ø½çÃæ
+        // 5ä½å¯†ç å…¨éƒ¨åŒ¹é…ï¼Œè¿›å…¥é€šå…³ç•Œé¢
         if (g_verify_index >= PASSWORD_LEN) {
             State_Success_Init();
-        } else { // ÇÐ»»µ½ÏÂÒ»Î»£¬Êý×ÖÖØÖÃ´Ó1¿ªÊ¼¹ö¶¯
+        } else { // åˆ‡æ¢åˆ°ä¸‹ä¸€ä½ï¼Œæ•°å­—é‡ç½®ä»Ž1å¼€å§‹æ»šåŠ¨
             g_roll_num = 1;
             g_roll_elapsed = 0;
             Display_SetDigit(g_verify_index, g_roll_num);
         }
-    } else { // µ±Ç°Î»Æ¥ÅäÊ§°Ü£¬Êý×ÖÖØÖÃÖØÐÂ¹ö¶¯
+    } else { // å½“å‰ä½åŒ¹é…å¤±è´¥ï¼Œæ•°å­—é‡ç½®é‡æ–°æ»šåŠ¨
         g_roll_num = 1;
         g_roll_elapsed = 0;
         Display_SetDigit(g_verify_index, g_roll_num);
     }
 }
 
-// 1ms¶¨Ê±ÈÎÎñº¯Êý£ºÊýÂë¹Ü¶¯Ì¬É¨Ãè¡¢Êý×Ö¹ö¶¯¼ÆÊ±¡¢·äÃùÊ±³¤¼ÆÊ±
+// 1mså®šæ—¶ä»»åŠ¡å‡½æ•°ï¼šæ•°ç ç®¡åŠ¨æ€æ‰«æã€æ•°å­—æ»šåŠ¨è®¡æ—¶ã€èœ‚é¸£æ—¶é•¿è®¡æ—¶
 static void Timer0_1ms_Task(void)
 {
-    P0 = SEG_BLANK; // ¶ÎÑ¡ÇåÁã£¬·ÀÖ¹ÇÐ»»Î»Ñ¡Ê±³öÏÖÍÏÓ°
-    Digit_Select(g_scan_pos); // Ñ¡ÖÐµ±Ç°É¨ÃèÊýÂë¹Ü
-    // Êä³öµ±Ç°»º´æ¶ÎÂëµ½P0¿Ú
+    P0 = SEG_BLANK; // æ®µé€‰æ¸…é›¶ï¼Œé˜²æ­¢åˆ‡æ¢ä½é€‰æ—¶å‡ºçŽ°æ‹–å½±
+    Digit_Select(g_scan_pos); // é€‰ä¸­å½“å‰æ‰«ææ•°ç ç®¡
+    // è¾“å‡ºå½“å‰ç¼“å­˜æ®µç åˆ°P0å£
     if (g_disp[g_scan_pos] == SEG_BLANK) {
         P0 = SEG_BLANK;
     } else {
         P0 = g_disp[g_scan_pos];
     }
     g_scan_pos++;
-    if (g_scan_pos >= DIGIT_COUNT) { // 8Î»É¨ÃèÍê³É£¬»Øµ½µÚÒ»Î»Ñ­»·
+    if (g_scan_pos >= DIGIT_COUNT) { // 8ä½æ‰«æå®Œæˆï¼Œå›žåˆ°ç¬¬ä¸€ä½å¾ªçŽ¯
         g_scan_pos = 0;
     }
 
-    // ÃÜÂëÑéÖ¤½çÃæ£º×Ô¶¯Êý×Ö¹ö¶¯¼ÆÊ±
+    // å¯†ç éªŒè¯ç•Œé¢ï¼šè‡ªåŠ¨æ•°å­—æ»šåŠ¨è®¡æ—¶
     if (g_state == STATE_VERIFY_PASSWORD && !g_wait_beep_result) {
         g_roll_elapsed++;
-        if (g_roll_elapsed >= 1000) { // Ã¿1000msÊý×Ö+1
+        if (g_roll_elapsed >= 1000) { // æ¯1000msæ•°å­—+1
             g_roll_elapsed = 0;
             g_roll_num++;
-            if (g_roll_num > 9) { // ³¬¹ý9ÖØÖÃÎª1Ñ­»·
+            if (g_roll_num > 9) { // è¶…è¿‡9é‡ç½®ä¸º1å¾ªçŽ¯
                 g_roll_num = 1;
             }
             Display_SetDigit(g_verify_index, g_roll_num);
         }
     }
 
-    // µ¥´ÎÌáÊ¾Òô¼ÆÊ±¿ØÖÆ
+    // å•æ¬¡æç¤ºéŸ³è®¡æ—¶æŽ§åˆ¶
     if (g_beep_mode == BEEP_ONCE) {
         g_beep_elapsed++;
         if (g_beep_elapsed >= g_beep_total) {
             Beep_Stop();
         }
     }
-    // ´íÎó¾¯Ê¾Òô·Ö¶Î¿ØÖÆ£ºÏì100ms£¬¾²Òô100ms£¬×ÜÊ±³¤300msÍ£Ö¹
+    // é”™è¯¯è­¦ç¤ºéŸ³åˆ†æ®µæŽ§åˆ¶ï¼šå“100msï¼Œé™éŸ³100msï¼Œæ€»æ—¶é•¿300msåœæ­¢
     else if (g_beep_mode == BEEP_ERROR) {
         g_beep_elapsed++;
         if (g_beep_elapsed == 100) {
@@ -543,13 +543,13 @@ static void Timer0_1ms_Task(void)
             Beep_Stop();
         }
     }
-    // Í¨¹ØÐýÂÉ²¥·Å£º°´Òô·ûÊ±³¤ÇÐ»»ÏÂÒ»¸öÒôµ÷
+    // é€šå…³æ—‹å¾‹æ’­æ”¾ï¼šæŒ‰éŸ³ç¬¦æ—¶é•¿åˆ‡æ¢ä¸‹ä¸€ä¸ªéŸ³è°ƒ
     else if (g_beep_mode == BEEP_MELODY) {
         g_beep_elapsed++;
         if (g_beep_elapsed >= MELODY_DUR[g_melody_index]) {
             g_melody_index++;
             g_beep_elapsed = 0;
-            if (MELODY_DUR[g_melody_index] == 0) { // ¶Áµ½ÐÝÖ¹½áÊø·û£¬Í£Ö¹ÐýÂÉ
+            if (MELODY_DUR[g_melody_index] == 0) { // è¯»åˆ°ä¼‘æ­¢ç»“æŸç¬¦ï¼Œåœæ­¢æ—‹å¾‹
                 Beep_Stop();
             } else {
                 Beep_SetFreq(MELODY_FREQ[g_melody_index]);
@@ -558,53 +558,53 @@ static void Timer0_1ms_Task(void)
     }
 }
 
-// ¶¨Ê±Æ÷0ÖÐ¶Ï·þÎñº¯Êý£¬1ms½øÒ»´ÎÖÐ¶Ï
+// å®šæ—¶å™¨0ä¸­æ–­æœåŠ¡å‡½æ•°ï¼Œ1msè¿›ä¸€æ¬¡ä¸­æ–­
 void Timer0_ISR(void) interrupt 1
 {
-    TH0 = T0_RELOAD_H; // ÊÖ¶¯ÖØ×°³õÖµ
+    TH0 = T0_RELOAD_H; // æ‰‹åŠ¨é‡è£…åˆå€¼
     TL0 = T0_RELOAD_L;
-    g_ms++;            // ÏµÍ³ºÁÃë¼ÆÊýÆ÷×ÔÔö
-    Timer0_1ms_Task(); // Ö´ÐÐ1msÖÜÆÚºóÌ¨ÈÎÎñ
+    g_ms++;            // ç³»ç»Ÿæ¯«ç§’è®¡æ•°å™¨è‡ªå¢ž
+    Timer0_1ms_Task(); // æ‰§è¡Œ1mså‘¨æœŸåŽå°ä»»åŠ¡
 }
 
-// ¶¨Ê±Æ÷1ÖÐ¶Ï·þÎñº¯Êý£¬²úÉú·½²¨Çý¶¯ÎÞÔ´·äÃùÆ÷
+// å®šæ—¶å™¨1ä¸­æ–­æœåŠ¡å‡½æ•°ï¼Œäº§ç”Ÿæ–¹æ³¢é©±åŠ¨æ— æºèœ‚é¸£å™¨
 void Timer1_ISR(void) interrupt 3
 {
-    TH1 = g_t1_reload >> 8; // ÖØ×°µ±Ç°Òôµ÷³õÖµ
+    TH1 = g_t1_reload >> 8; // é‡è£…å½“å‰éŸ³è°ƒåˆå€¼
     TL1 = g_t1_reload & 0xFF;
     if (g_beep_enable) {
-        BEEP = !BEEP; // µçÆ½·­×ªÊä³ö·½²¨·¢Éù
+        BEEP = !BEEP; // ç”µå¹³ç¿»è½¬è¾“å‡ºæ–¹æ³¢å‘å£°
     } else {
-        BEEP = 1;     // ¾²Òô
+        BEEP = 1;     // é™éŸ³
     }
 }
 
-// ³ÌÐòÖ÷Èë¿Úº¯Êý
+// ç¨‹åºä¸»å…¥å£å‡½æ•°
 void main(void)
 {
     u8 key;
-    P0 = SEG_BLANK;  // ÉÏµçÏ¨ÃðËùÓÐÊýÂë¹Ü¶ÎÑ¡
-    P1 = 0xFF;       // ¾ØÕó¼üÅÌÐÐÈ«²¿ÖÃ¸ß
-    BEEP = 1;        // ÉÏµç·äÃùÆ÷¾²Òô
-    Timer_Init();    // ³õÊ¼»¯¶¨Ê±Æ÷ÓëÖÐ¶Ï
-    State_SetPassword_Init(); // ½øÈëÉèÖÃÃÜÂë³õÊ¼½çÃæ
-    // Ö÷Ñ­»·ÂÖÑ¯É¨Ãè°´¼ü
+    P0 = SEG_BLANK;  // ä¸Šç”µç†„ç­æ‰€æœ‰æ•°ç ç®¡æ®µé€‰
+    P1 = 0xFF;       // çŸ©é˜µé”®ç›˜è¡Œå…¨éƒ¨ç½®é«˜
+    BEEP = 1;        // ä¸Šç”µèœ‚é¸£å™¨é™éŸ³
+    Timer_Init();    // åˆå§‹åŒ–å®šæ—¶å™¨ä¸Žä¸­æ–­
+    State_SetPassword_Init(); // è¿›å…¥è®¾ç½®å¯†ç åˆå§‹ç•Œé¢
+    // ä¸»å¾ªçŽ¯è½®è¯¢æ‰«ææŒ‰é”®
     while (1) {
         key = Key_GetClick();
-        if (key == 0) { // ÎÞ°´¼ü£¬¼ì²â·äÃùÍê³ÉºóÐøÂß¼­
+        if (key == 0) { // æ— æŒ‰é”®ï¼Œæ£€æµ‹èœ‚é¸£å®ŒæˆåŽç»­é€»è¾‘
             Verify_AfterBeep();
             continue;
         }
-        if (key == 14) { // 14ºÅ¸´Î»¼ü£¬È«¾ÖÖØÖÃ³ÌÐò
+        if (key == 14) { // 14å·å¤ä½é”®ï¼Œå…¨å±€é‡ç½®ç¨‹åº
             System_Reset();
             continue;
         }
-        // ¸ù¾Ýµ±Ç°ÏµÍ³×´Ì¬´¦Àí°´¼ü
+        // æ ¹æ®å½“å‰ç³»ç»ŸçŠ¶æ€å¤„ç†æŒ‰é”®
         if (g_state == STATE_SET_PASSWORD) {
             Handle_SetPassword(key);
         } else if (g_state == STATE_VERIFY_PASSWORD) {
             Handle_Verify(key);
         }
-        Verify_AfterBeep(); // Ã¿´Î°´¼üºóÐ£Ñé·äÃùÍê³ÉÂß¼­
+        Verify_AfterBeep(); // æ¯æ¬¡æŒ‰é”®åŽæ ¡éªŒèœ‚é¸£å®Œæˆé€»è¾‘
     }
 }
